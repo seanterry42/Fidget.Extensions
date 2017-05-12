@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.4
+VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Shared", "_Shared", "{8EEB41A1-C278-4C66-B3CA-F863D083486A}"
 	ProjectSection(SolutionItems) = preProject
@@ -14,6 +14,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fidget.Extensions.Guids.Test", "Fidget.Extensions.Guids\test\Fidget.Extensions.Guids.Test.csproj", "{17E0C2E8-B466-4CFD-A19D-76F27AF2D66A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Guids", "Guids", "{4532D616-AF24-43B7-AD85-093D758CF448}"
+	ProjectSection(SolutionItems) = preProject
+		Fidget.Extensions.Guids\README.md = Fidget.Extensions.Guids\README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

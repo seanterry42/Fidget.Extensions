@@ -40,13 +40,15 @@ namespace Fidget.Extensions.Guids.Internal
             // shift the high order bit of the sequence to apply the zero variant
             const long mask = 0x7fff;
             sequence = unchecked( ( (sequence & ~mask ) << 1 ) + ( sequence & mask ) );
-            
-            // correct for endianness
             var bytes = BitConverter.GetBytes( sequence );
-            Array.Reverse( bytes, 0, 2 );
-            Array.Reverse( bytes, 2, 6 );
-
             var output = source.ToByteArray();
+
+            // correct for endianness
+            if ( BitConverter.IsLittleEndian ) {
+                Array.Reverse( bytes, 0, 2 );
+                Array.Reverse( bytes, 2, 6 );
+            }
+            
             Array.Copy( bytes, 0, output, 8, 8 );
 
             return new Guid( output );
