@@ -9,17 +9,17 @@ namespace Fidget.Extensions.Guids
     public interface ISequentialGuidFactory
     {
         /// <summary>
-        /// Writes the given sequence value into the highest-order bytes of the given source Guid.
+        /// Creates and returns a sequential identifier conforming to the RFC 4122 specification
+        /// for a time-based UUID (https://tools.ietf.org/html/rfc4122#section-4.2)
         /// </summary>
-        /// <param name="source">
-        /// Source Guid to sequentialize.
-        /// Version 3, 4, or 5 Guids are recommended to ensure sufficient entropy to avoid collisions.</param>
-        /// <param name="sequence">Sequence number to write into the highest-order bytes.</param>
-        /// <returns>
-        /// The source Guid with the sequence value written into the highest-order bytes.
-        /// The version of the Guid will not be changed, but the variant of the new value will be
-        /// set to zero to remove these generated values from the same collision domain.</returns>
-        
-        Guid Create( Guid source, long sequence );
+        /// <param name="time">Number of 100 nanosecond intervals since 00:00:00.00, 15 October 1582.</param>
+        /// <param name="clock">Value that represents an incremented clock sequence.</param>
+        /// <param name="node">48-bit node identifier.</param>
+        /// <remarks>
+        /// The most-significant nibble (4 bits) of the time will be overwritten by the identifier version,
+        /// causing a roll-over of values once every approximately two-thousand years.
+        /// </remarks>
+
+        Guid Create( long time, int clock, byte[] node );
     }
 }

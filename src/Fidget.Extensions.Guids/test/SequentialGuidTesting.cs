@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace Fidget.Extensions.Guids.Test
@@ -8,7 +6,7 @@ namespace Fidget.Extensions.Guids.Test
     /// <summary>
     /// Tests of the SequentialGuid extension methods.
     /// </summary>
-    
+
     public class SequentialGuidTesting
     {
         /// <summary>
@@ -28,36 +26,53 @@ namespace Fidget.Extensions.Guids.Test
         }
 
         /// <summary>
-        /// Tests of the GetNextSequence method.
+        /// Tests of the create method for SQL Server types.
         /// </summary>
         
-        public class GetNextSequence
+        public class Create_SqlServer
         {
+            /// <summary>
+            /// Calls the create method.
+            /// </summary>
+            
+            Guid CallCreate() => SequentialGuid.Create( GuidAlgorithm.SqlServer );
+
+            /// <summary>
+            /// The variant should be zero to avoid collisions with real Guids.
+            /// </summary>
+            
             [Fact]
-            public void Returns_GreaterThanPrevious()
+            public void Returns_variant_zero()
             {
-                var current = SequentialGuid.GetNextSequence();
+                var actual = CallCreate().ToByteArray();
+                
+                // first bit of byte 8 should be zero
+                Assert.Equal( 0, actual[8] & 0x80 );
+            }
+            
+            /// <summary>
+            /// The version has been moved to the same field as the variant.
+            /// </summary>
+            
+            [Fact]
+            public void Returns_version_one()
+            {
+                var actual = CallCreate().ToByteArray();
 
-                for ( var i = 0; i < 100; i++ )
-                {
-                    var next = SequentialGuid.GetNextSequence();
-                    Assert.True( next > current );
-
-                    current = next;
-                }
+                // first nibble of byte 8 should be one
+                Assert.Equal( 1, actual[8] >> 4 );
             }
 
+            /// <summary>
+            /// The originating variant (for UUIDv1 transposability) should be one.
+            /// </summary>
+            
             [Fact]
-            public void Returns_SystemTime_TicksFromEpoch()
+            public void Returns_original_variant_one()
             {
-                var now = DateTime.UtcNow.Ticks - SequentialGuid.Epoch;
-                var actual = SequentialGuid.GetNextSequence();
-                var high = DateTime.UtcNow.Ticks + TimeSpan.TicksPerMillisecond;
-
-                // this proves that our seqence was created after the system clock
-                // was originally checked, but within a millisecond of our expected time.
-                // the sequence can advance a ways do to other concurrent tests.
-                Assert.InRange( actual, now, high );
+                var actual = CallCreate().ToByteArray();
+                Assert.NotEqual( 0, actual[6] & 0x80 );
+                Assert.Equal( 0, actual[6] & 0x40 );
             }
         }
     }

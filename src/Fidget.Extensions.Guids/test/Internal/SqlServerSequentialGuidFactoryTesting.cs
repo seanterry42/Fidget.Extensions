@@ -12,89 +12,143 @@ namespace Fidget.Extensions.Guids.Internal
     public class SqlServerSequentialGuidFactoryTesting
     {
         /// <summary>
-        /// Source GUID value.
+        /// Time argument.
         /// </summary>
         
-        Guid source = Guid.NewGuid();
+        long time;
 
         /// <summary>
-        /// Sequence argument.
+        /// Clock arguments.
         /// </summary>
-        
-        long sequence;
+
+        int clock;
 
         /// <summary>
-        /// Calls the create method with the configured arguments.
+        /// Node argument.
         /// </summary>
         
-        Guid CallCreate() => source.Sequentialize( GuidFormat.SqlServer, sequence );
-
-        [Fact]
-        public void Create_requires_positive_sequence()
+        byte[] node = new byte[6];
+        
+        /// <summary>
+        /// Tests of the create method.
+        /// </summary>
+        
+        public class Create : SqlServerSequentialGuidFactoryTesting
         {
-            sequence = new Random().Next( int.MinValue, 0 );
-            Assert.Throws<ArgumentOutOfRangeException>( "sequence", () => CallCreate() );
-        }
-
-        [Fact]
-        public void Create_returns_variant_zero()
-        {
-            sequence = long.MaxValue;
-            var actual = CallCreate().ToByteArray();
+            /// <summary>
+            /// Calls the create method.
+            /// </summary>
             
-            // first bit of byte 8 should always be zero
-            Assert.Equal( 0x00, actual[8] & 0x80 );
-        }
+            Guid CallCreate() => SequentialGuid
+                .GetFactory( GuidAlgorithm.SqlServer )
+                .Create( time, clock, node );
 
-        /// <summary>
-        /// The highest order sequence bits should be shifted by one place and in the heaviest
-        /// weighted fields (10-15).
-        /// </summary>
-        
-        [Fact]
-        public void Create_returns_highOrderSequenceInCorrectOrder()
-        {
-            sequence = 0x0123456789ABCDEF;
+            /// <summary>
+            /// Next most significant bytes should contain the middle time value.
+            /// </summary>
 
-            // high order sequence is shifted
-            var bytes = BitConverter.GetBytes( sequence << 1 );
-            var actual = CallCreate().ToByteArray();
-            
-            // highest order should be in 10-15
-            Assert.Equal( bytes[7], actual[10] );
-            Assert.Equal( bytes[6], actual[11] );
-            Assert.Equal( bytes[5], actual[12] );
-            Assert.Equal( bytes[4], actual[13] );
-            Assert.Equal( bytes[3], actual[14] );
-            Assert.Equal( bytes[2], actual[15] );
-        }
+            [Theory]
+            [InlineData( long.MinValue )]
+            [InlineData( long.MaxValue )]
+            [InlineData( 0 )]
+            [InlineData( 0x01234567890ABCDEF )]
 
-        [Fact]
-        public void Create_returns_lowOrderSequenceInCorrectOrder()
-        {
-            sequence = 0x0123456789ABCDEF;
-            var bytes = BitConverter.GetBytes( sequence );
-            var actual = CallCreate().ToByteArray();
-
-            // first bit cleared for variant
-            Assert.Equal( bytes[1] & 0x7f, actual[8] );
-            Assert.Equal( bytes[0], actual[9] );
-        }
-
-        /// <summary>
-        /// The source Guid should hold the bottom 64 bits.
-        /// </summary>
-        
-        [Fact]
-        public void Create_returns_bottomOrderSourceGuid()
-        {
-            sequence = 0x0123456789ABCDEF;
-            var expected = source.ToByteArray();
-            var actual = CallCreate().ToByteArray();
-
-            for ( var i = 0; i < 8; i++ )
+            public void Returns_bytes10to15_timeHigh( long timeValue )
             {
-                Assert.Equal( expected[i], actual[i] );
+                time = timeValue;
+                var guid = CallCreate();
+                var actual = guid.ToByteArray();
+                
+                // skip the low sequence
+                timeValue >>= 12;
+
+                for ( var i = 15; i >= 10; i-- )
+                {
+                    var expected = timeValue & 0xFF;
+                    Assert.Equal( expected, actual[i] );
+                    timeValue >>= 8;
+                }
+            }
+
+            [Theory]
+            [InlineData( long.MinValue )]
+            [InlineData( long.MaxValue )]
+            [InlineData( 0 )]
+            [InlineData( 0x0123456789ABCDEF )]
+
+            public void Returns_byte8_timeLow_with_variantVersion( long timeValue )
+            {
+                time = timeValue;
+                var guid = CallCreate();
+                var actual = guid.ToByteArray();
+                var expected = 0x10 + ( ( timeValue >> 8 ) & 0x0F );
+                Assert.Equal( expected, actual[8] );
+            }
+
+            [Theory]
+            [InlineData( long.MinValue )]
+            [InlineData( long.MaxValue )]
+            [InlineData( 0 )]
+            [InlineData( 0x01234567890ABCDEF )]
+
+            public void Returns_bytes9_timeLow( long timeValue )
+            {
+                time = timeValue;
+                var guid = CallCreate();
+                var actual = guid.ToByteArray();
+                var expected = time & 0xFF;
+                Assert.Equal( expected, actual[9] );
+            }
+
+            [Theory]
+            [InlineData( int.MinValue )]
+            [InlineData( int.MaxValue )]
+            [InlineData( 0 )]
+            [InlineData( 0x1234 )]
+            
+            public void Returns_bytes6_clockHigh_with_variant( int clockValue )
+            {
+                clock = clockValue;
+                var guid = CallCreate();
+                var actual = guid.ToByteArray();
+                const int variant = 0x80;
+                var expected = variant + ( ( clockValue >> 8 ) & 0x3F );
+
+                Assert.Equal( expected, actual[6] );
+            }
+
+            [Theory]
+            [InlineData( int.MinValue )]
+            [InlineData( int.MaxValue )]
+            [InlineData( 0 )]
+            [InlineData( 0x1234 )]
+
+            public void Returns_byte7_clockLow( int clockValue )
+            {
+                clock = clockValue;
+                var guid = CallCreate();
+                var actual = guid.ToByteArray();
+                var expected = clockValue & 0xFF;
+
+                Assert.Equal( expected, actual[7] );
+            }
+
+            /// <summary>
+            /// Bytes 0 to 5 contain the node.
+            /// </summary>
+
+            [Fact]
+            public void Returns_bytes0to5_node()
+            {
+                node = new byte[6];
+                new Random().NextBytes( node );
+                var guid = CallCreate();
+                var actual = guid.ToByteArray();
+
+                for ( var i = 0; i < 6; i++ )
+                {
+                    Assert.Equal( node[i], actual[i] );
+                }
             }
         }
     }
