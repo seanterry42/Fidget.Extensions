@@ -13,4 +13,12 @@
         <PackageProjectUrl>https://github.com/seanterry42/Fidget.Extensions</PackageProjectUrl>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+      <DocumentationFile>bin\Debug\netstandard1.4\.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <DocumentationFile>bin\Release\netstandard1.4\.xml</DocumentationFile>
+    </PropertyGroup>
+
 </Project>
