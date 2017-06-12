@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using Xunit;
 
 namespace Fidget.Extensions.Reflection.Internal
@@ -220,6 +221,76 @@ namespace Fidget.Extensions.Reflection.Internal
 
                 // ensure non-null values are not the same instances
                 if ( expected != null ) Assert.NotSame( expected, actual );
+            }
+        }
+
+        /// <summary>
+        /// Tests of the class as a collection.
+        /// </summary>
+        
+        public class Enumerable
+        {
+            /// <summary>
+            /// Model type for testing.
+            /// </summary>
+            
+            class Model
+            {
+                public int Property1 { get; set; }
+                public string Property2 { get; set; }
+                internal int InternalProperty { get; set; }
+            }
+
+            [Theory]
+            [InlineData(nameof(Model.Property1))]
+            [InlineData(nameof(Model.Property2))]
+            public void Contains_publicProperties( string propertyName )
+            {
+                var actual = TypeReflector<Model>.Instance;
+                Assert.Contains( actual, _=> _.PropertyInfo.Name == propertyName );
+            }
+
+            [Theory]
+            [InlineData(nameof(Model.InternalProperty))]
+            public void DoesNotContain_nonPublicProperties( string propertyName )
+            {
+                var actual = TypeReflector<Model>.Instance;
+                Assert.DoesNotContain( actual, _=> _.PropertyInfo.Name == propertyName );
+            }
+        }
+
+        /// <summary>
+        /// Tests of the index method.
+        /// </summary>
+        
+        public class Index
+        {
+            /// <summary>
+            /// Model type for testing.
+            /// </summary>
+
+            class Model
+            {
+                public int Property1 { get; set; }
+                public string Property2 { get; set; }
+                internal int InternalProperty { get; set; }
+            }
+
+            [Theory]
+            [InlineData( nameof( Model.Property1 ) )]
+            [InlineData( nameof( Model.Property2 ) )]
+            public void Returns_propertyReflector_whenPublicProperty( string propertyName )
+            {
+                var actual = TypeReflector<Model>.Instance[propertyName];
+                Assert.IsAssignableFrom<IPropertyReflector<Model>>( actual );
+                Assert.Equal( propertyName, actual.PropertyInfo.Name );
+            }
+
+            [Theory]
+            [InlineData( nameof( Model.InternalProperty ) )]
+            public void Throws_outOfRange_whenNonPublicProperty( string propertyName )
+            {
+                Assert.Throws<IndexOutOfRangeException>( () => TypeReflector<Model>.Instance[propertyName] );
             }
         }
     }

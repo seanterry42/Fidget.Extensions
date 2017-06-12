@@ -1,12 +1,21 @@
-﻿namespace Fidget.Extensions.Reflection
+﻿using System.Collections.Generic;
+
+namespace Fidget.Extensions.Reflection
 {
     /// <summary>
     /// Defines a fast reflection provider for a type.
     /// </summary>
     /// <typeparam name="T">Type to reflect.</typeparam>
 
-    public interface ITypeReflector<T>
+    public interface ITypeReflector<T> : IEnumerable<IPropertyReflector<T>>
     {
+        /// <summary>
+        /// Gets the specified property.
+        /// </summary>
+        /// <param name="propertyName">Name of the property.</param>
+
+        IPropertyReflector<T> this[string propertyName] { get; }
+
         /// <summary>
         /// Creates and returns a shallow copy of the source instance.
         /// </summary>

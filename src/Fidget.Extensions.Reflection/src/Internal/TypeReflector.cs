@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -46,6 +47,35 @@ namespace Fidget.Extensions.Reflection.Internal
         /// </summary>
 
         readonly IReadOnlyDictionary<string, IPropertyReflector<T>> Index;
+
+        /// <summary>
+        /// Returns an enumerator that iterates through a collection.
+        /// </summary>
+
+        public IEnumerator<IPropertyReflector<T>> GetEnumerator() => Index.Values.GetEnumerator();
+
+        /// <summary>
+        /// Returns an enumerator that iterates through a collection.
+        /// </summary>
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        /// <summary>
+        /// Returns the property with the given name.
+        /// </summary>
+        /// <param name="name">Name of the property to return.</param>
+
+        IPropertyReflector<T> GetProperty( string name ) => 
+            Index.TryGetValue( name, out IPropertyReflector<T> property )
+                ? property
+                : throw new IndexOutOfRangeException();
+
+        /// <summary>
+        /// Gets the specified property.
+        /// </summary>
+        /// <param name="name">Name of the property.</param>
+
+        public IPropertyReflector<T> this[string name] { get => GetProperty( name ); }
 
         /// <summary>
         /// Collection of properties on the type that are arrays.
