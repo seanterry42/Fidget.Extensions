@@ -92,7 +92,7 @@ namespace Fidget.Extensions.Reflection.Internal
                 var expected = source.Reference = useNull ? null : new object();
                 var actual = Invoke().Reference;
 
-                Assert.True( object.ReferenceEquals( expected, actual ) );
+                Assert.Same( expected, actual );
             }
 
             [Theory]
@@ -116,7 +116,110 @@ namespace Fidget.Extensions.Reflection.Internal
                 var expected = source.Array = Guid.NewGuid().ToByteArray();
                 var actual = Invoke().Array;
 
-                Assert.False( object.ReferenceEquals( expected, actual ) );
+                Assert.NotSame( expected, actual );
+            }
+        }
+
+        /// <summary>
+        /// Tests of the CopyTo method.
+        /// </summary>
+        
+        public class CopyTo
+        {
+            /// <summary>
+            /// Model type for testing.
+            /// </summary>
+            
+            class Model
+            {
+                public Guid? Value { get; set; }
+                public byte[] Array { get; set; }
+                public object Reference { get; set; }
+
+                public Guid? ReadOnlyValue { get; }
+                public byte[] ReadOnlyArray { get; }
+            }
+
+            /// <summary>
+            /// Source argument.
+            /// </summary>
+            
+            Model source = new Model {};
+
+            /// <summary>
+            /// Target argument.
+            /// </summary>
+            
+            Model target = new Model
+            {
+                Value = Guid.Empty,
+                Reference = new object(),
+                Array = new byte[0],
+            };
+
+            /// <summary>
+            /// Invokes the method under test.
+            /// </summary>
+            
+            Model Invoke() => TypeReflector<Model>.Instance.CopyTo( source, target );
+            
+            [Fact]
+            public void Requires_source()
+            {
+                source = null;
+                Assert.Throws<ArgumentNullException>( nameof(source), () => Invoke() );
+            }
+
+            [Fact]
+            public void Requires_target()
+            {
+                target = null;
+                Assert.Throws<ArgumentNullException>( nameof(target), () => Invoke() );
+            }
+
+            [Fact]
+            public void Returns_target()
+            {
+                var expected = target;
+                var actual = Invoke();
+
+                Assert.Equal( expected, actual );
+            }
+
+            [Theory]
+            [InlineData( false )]
+            [InlineData( true )]
+            public void Copies_valueType_byValue( bool useNull )
+            {
+                var expected = source.Value = useNull ? (Guid?)null : Guid.NewGuid();
+                var actual = Invoke().Value;
+
+                Assert.Equal( expected, actual );
+            }
+
+            [Theory]
+            [InlineData( false )]
+            [InlineData( true )]
+            public void Copies_referenceType_byReference( bool useNull )
+            {
+                var expected = source.Reference = useNull ? null : new object();
+                var actual = Invoke().Reference;
+
+                Assert.Same( expected, actual );
+            }
+
+            [Theory]
+            [InlineData( false )]
+            [InlineData( true )]
+            public void Copies_arrayType_byValue( bool useNull )
+            {
+                var expected = source.Array = useNull ? null : Guid.NewGuid().ToByteArray();
+                var actual = Invoke().Array;
+
+                Assert.Equal( expected, actual );
+
+                // ensure non-null values are not the same instances
+                if ( expected != null ) Assert.NotSame( expected, actual );
             }
         }
     }

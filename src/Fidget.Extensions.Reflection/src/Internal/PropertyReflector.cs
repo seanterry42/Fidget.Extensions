@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 
 namespace Fidget.Extensions.Reflection.Internal
 {
@@ -9,7 +7,7 @@ namespace Fidget.Extensions.Reflection.Internal
     /// Defines a fast reflection provider for a property.
     /// </summary>
     /// <typeparam name="T">Declaring type of the property.</typeparam>
-    
+
     abstract class PropertyReflector<T> : IPropertyReflector<T>
     {
         /// <summary>
@@ -40,6 +38,7 @@ namespace Fidget.Extensions.Reflection.Internal
             PropertyInfo = propertyInfo ?? throw new ArgumentNullException( nameof(propertyInfo) );
 
             IsArray = PropertyInfo.PropertyType.IsArray;
+            IsReadOnly = PropertyInfo.SetMethod == null;
         }
 
         /// <summary>

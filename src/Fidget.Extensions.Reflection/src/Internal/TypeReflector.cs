@@ -109,5 +109,28 @@ namespace Fidget.Extensions.Reflection.Internal
 
             return clone;
         }
+
+        /// <summary>
+        /// Copies the property values from the source instance to the target.
+        /// </summary>
+        /// <param name="source">Source instance whose property values to copy.</param>
+        /// <param name="target">Target instance into which to copy the values.</param>
+        /// <returns>The target instance.</returns>
+
+        public T CopyTo( T source, T target )
+        {
+            if ( source == null ) throw new ArgumentNullException( nameof( source ) );
+            if ( target == null ) throw new ArgumentNullException( nameof( target ) );
+            
+            foreach ( var property in Index.Values )
+            {
+                if ( !property.IsReadOnly )
+                {
+                    property.Copy( source, target );
+                }
+            }
+            
+            return target;
+        }
     }
 }
