@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Reflection;
 
 namespace Fidget.Extensions.Reflection.Internal
@@ -8,7 +8,7 @@ namespace Fidget.Extensions.Reflection.Internal
     /// <summary>
     /// Shared elements for type reflectors.
     /// </summary>
-    
+
     abstract class TypeReflector
     {
         /// <summary>
@@ -36,10 +36,50 @@ namespace Fidget.Extensions.Reflection.Internal
     class TypeReflector<T> : TypeReflector, ITypeReflector<T>
     {
         /// <summary>
-        /// Constructs a fast reflection provider for a type.
+        /// Type being reflected.
         /// </summary>
         
-        TypeReflector() {}
+        readonly Type Type = typeof(T);
+
+        /// <summary>
+        /// Collection of properties indexed by name.
+        /// </summary>
+
+        readonly IReadOnlyDictionary<string, IPropertyReflector<T>> Index;
+
+        /// <summary>
+        /// Collection of properties on the type that are arrays.
+        /// </summary>
+
+        readonly IEnumerable<IPropertyReflector<T>> Arrays;
+
+        /// <summary>
+        /// Constructs a fast reflection provider for a type.
+        /// </summary>
+
+        TypeReflector() 
+        {
+            // creates and returns a reflector for the given property
+            IPropertyReflector<T> createReflector( PropertyInfo propertyInfo )
+            {
+                var type = typeof( PropertyReflector<,> )
+                    .MakeGenericType( propertyInfo.DeclaringType, propertyInfo.PropertyType );
+
+                return (IPropertyReflector<T>)Activator
+                    .CreateInstance( type, propertyInfo );
+            }
+            
+            Index = Type
+                .GetProperties()
+                .Select( _ => createReflector( _ ) )
+                .ToDictionary( _ => _.PropertyInfo.Name );
+
+            Arrays = Index
+                .Values
+                .Where( _=> _.IsArray )
+                .Where( _=> !_.IsReadOnly )
+                .ToArray();
+        }
 
         /// <summary>
         /// Singleton instance of the type.
@@ -51,12 +91,23 @@ namespace Fidget.Extensions.Reflection.Internal
         /// Creates and returns a shallow copy of the source instance.
         /// </summary>
         /// <param name="source">Source instance to clone.</param>
-        
+
         public T Clone( T source )
         {
             if ( source == null ) throw new ArgumentNullException( nameof( source ) );
 
-            return (T)CloneMethod.Invoke( source );
+            var clone = (T)CloneMethod.Invoke( source );
+
+            // perform a structural copy of any array properties
+            foreach ( var property in Arrays )
+            {
+                if ( property.IsArray && !property.IsReadOnly )
+                {
+                    property.Copy( source, clone );
+                }
+            }
+
+            return clone;
         }
     }
 }

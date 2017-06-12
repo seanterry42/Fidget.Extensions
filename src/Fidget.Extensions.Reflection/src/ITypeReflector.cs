@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Fidget.Extensions.Reflection
+﻿namespace Fidget.Extensions.Reflection
 {
     /// <summary>
     /// Defines a fast reflection provider for a type.
     /// </summary>
     /// <typeparam name="T">Type to reflect.</typeparam>
-    
+
     public interface ITypeReflector<T>
     {
         /// <summary>
