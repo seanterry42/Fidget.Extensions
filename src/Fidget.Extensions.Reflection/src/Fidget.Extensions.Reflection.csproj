@@ -21,4 +21,8 @@
         <DocumentationFile>bin\Release\netstandard1.4\Fidget.Extensions.Reflection.xml</DocumentationFile>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />
+    </ItemGroup>
+
 </Project>
