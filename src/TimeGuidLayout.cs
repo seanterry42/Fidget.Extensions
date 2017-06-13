@@ -8,8 +8,8 @@
     {
         /// <summary>
         /// GUID layout as described in RFC 4122 Section 4.1.2.
+        /// https://tools.ietf.org/html/rfc4122#section-4.1.2
         /// </summary>
-        /// <see cref="https://tools.ietf.org/html/rfc4122#section-4.1.2"/>
         
         Standard = 1,
 
