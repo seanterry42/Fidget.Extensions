@@ -196,5 +196,159 @@ namespace Fidget.Extensions.Reflection.Internal
                 if ( expected != null ) Assert.NotSame( expected, actual );
             }
         }
+
+        /// <summary>
+        /// Tests of the Equal method.
+        /// </summary>
+        
+        public class Equal
+        {
+            /// <summary>
+            /// Model for testing.
+            /// </summary>
+
+            class Model
+            {
+                public Guid? Value { get; set; }
+                public string String { get; set; }
+                public byte[] Array { get; set; }
+                public object Reference { get; set; }
+            }
+
+            Model source = new Model();
+            Model comparer = new Model();
+            bool Invoke( string propertyName ) => TypeReflector<Model>.Instance[propertyName].Equal( source, comparer );
+
+            [Fact]
+            public void Requires_source()
+            {
+                source = null;
+                Assert.Throws<ArgumentNullException>( nameof(source), () => Invoke( nameof(Model.Value) ) );
+            }
+
+            [Fact]
+            public void Requires_comparer()
+            {
+                comparer = null;
+                Assert.Throws<ArgumentNullException>( nameof(comparer), () => Invoke( nameof(Model.Value) ) );
+            }
+
+            [Theory]
+            [InlineData( null )]
+            [InlineData( "feb276f3-114f-4ecd-a04d-7199b96fe91d" )]
+            public void Returns_true_whenValueTypesEqual( string valueText )
+            {
+                source.Value = Guid.TryParse( valueText, out Guid value ) ? value : (Guid?)null;
+                comparer.Value = source.Value;
+                var actual = Invoke( nameof(Model.Value) );
+
+                Assert.True( actual );
+            }
+
+            [InlineData( "a9604fcc-7c28-4c23-b9f5-81e86c864c71", null )]
+            [InlineData( null, "d3def891-8488-44b8-946e-cc79e418187b" )]
+            [InlineData( "0ef9019d-79a1-4a9e-a799-9f4af8f93762", "3e3dcee7-ce45-4bc4-bdd4-c9c3cbfc6a5d" )]
+            [Theory]
+            public void Returns_false_whenValueTypesUnequal( string sourceValue, string comparerValue )
+            {
+                Guid? toGuid( string valueText ) => Guid.TryParse( valueText, out Guid value ) ? value : (Guid?)null;
+                source.Value = toGuid( sourceValue );
+                comparer.Value = toGuid( comparerValue );
+                var actual = Invoke( nameof(Model.Value) );
+
+                Assert.False( actual );
+            }
+
+            [Theory]
+            [InlineData( null )]
+            [InlineData( "fa98c43d-42d1-4673-abfe-8f6baecac50d" )]
+            public void Returns_true_whenStringTypesEqual( string valueText )
+            {
+                source.String = 
+                comparer.String = valueText;
+                var actual = Invoke( nameof( Model.String ) );
+
+                Assert.True( actual );
+            }
+
+            [InlineData( "a9604fcc-7c28-4c23-b9f5-81e86c864c71", null )]
+            [InlineData( null, "d3def891-8488-44b8-946e-cc79e418187b" )]
+            [InlineData( "0ef9019d-79a1-4a9e-a799-9f4af8f93762", "3e3dcee7-ce45-4bc4-bdd4-c9c3cbfc6a5d" )]
+            [Theory]
+            public void Returns_false_whenStringTypesUnequal( string sourceValue, string comparerValue )
+            {
+                source.String = sourceValue;
+                comparer.String = comparerValue;
+                var actual = Invoke( nameof( Model.String ) );
+
+                Assert.False( actual );
+            }
+
+            [InlineData( true )]
+            [InlineData( false )]
+            [Theory]
+            public void Returns_true_whenReferenceTypesSame( bool useNull )
+            {
+                var reference = !useNull ? new object() : null;
+                source.Reference =
+                comparer.Reference = reference;
+                var actual = Invoke( nameof(Model.Reference) );
+                
+                Assert.True( actual );
+            }
+
+            /// <summary>
+            /// False should be returned when string values differ.
+            /// </summary>
+
+            [InlineData( true, false )]
+            [InlineData( false, false )]
+            [InlineData( false, true )]
+            [Theory]
+            public void Returns_false_whenReferenceTypesDifferent( bool sourceNull, bool comparerNull )
+            {
+                source.Reference = !sourceNull ? new object() : null;
+                comparer.Reference = !comparerNull ? new object() : null;
+                var actual = Invoke(nameof(Model.Reference));
+                
+                Assert.False( actual );
+            }
+
+            [InlineData( null )]
+            [InlineData( "feb276f3-114f-4ecd-a04d-7199b96fe91d" )]
+            [Theory]
+            public void Returns_true_whenArrayTypesMatchElements( string value )
+            {
+                byte[] toArray() => value != null
+                    ? new Guid( value ).ToByteArray()
+                    : null;
+
+                source.Array = toArray();
+                comparer.Array = toArray();
+                
+                // sanity check
+                if ( value != null ) Assert.NotSame( source.Array, comparer.Array );
+                
+                var actual = Invoke( nameof(Model.Array) );
+                Assert.True( actual );
+            }
+
+            [InlineData( "a9604fcc-7c28-4c23-b9f5-81e86c864c71", null )]
+            [InlineData( null, "d3def891-8488-44b8-946e-cc79e418187b" )]
+            [InlineData( "0ef9019d-79a1-4a9e-a799-9f4af8f93762", "3e3dcee7-ce45-4bc4-bdd4-c9c3cbfc6a5d" )]
+            [Theory]
+            public void Returns_false_whenArrayTypesDifferentElements( string sourceValue, string comparerValue )
+            {
+                byte[] toArray( string value ) => value != null
+                    ? new Guid( value ).ToByteArray()
+                    : null;
+
+                source.Array = toArray( sourceValue );
+                comparer.Array = toArray( comparerValue );
+                var actual = Invoke(nameof(Model.Array));
+
+                Assert.False( actual );
+            }
+        }
     }
 }

@@ -1,19 +1,21 @@
 ﻿using System;
+using System.Collections;
 using System.Reflection;
 
 namespace Fidget.Extensions.Reflection.Internal
 {
     /// <summary>
-    /// Defines a fast reflection provider for a property.
+    /// Fast reflection provider for a property.
     /// </summary>
     /// <typeparam name="T">Declaring type of the property.</typeparam>
+    /// <typeparam name="V">Type of the property value.</typeparam>
 
-    abstract class PropertyReflector<T> : IPropertyReflector<T>
+    class PropertyReflector<T, V> : IPropertyReflector<T>
     {
         /// <summary>
         /// Gets the property being reflected.
         /// </summary>
-        
+
         public PropertyInfo PropertyInfo { get; }
 
         /// <summary>
@@ -28,36 +30,6 @@ namespace Fidget.Extensions.Reflection.Internal
 
         public bool IsReadOnly { get; }
 
-        /// <summary>
-        /// Initializes a fast reflection provider for a property.
-        /// </summary>
-        /// <param name="propertyInfo">Property being reflected.</param>
-
-        protected PropertyReflector( PropertyInfo propertyInfo )
-        {
-            PropertyInfo = propertyInfo ?? throw new ArgumentNullException( nameof(propertyInfo) );
-
-            IsArray = PropertyInfo.PropertyType.IsArray;
-            IsReadOnly = PropertyInfo.SetMethod == null;
-        }
-
-        /// <summary>
-        /// Copies the value of the property from the source instance to the target.
-        /// </summary>
-        /// <param name="source">Source instance containing the property value to copy.</param>
-        /// <param name="target">Target instance into which to copy the property value.</param>
-
-        public abstract void Copy( T source, T target );
-    }
-
-    /// <summary>
-    /// Fast reflection provider for a property.
-    /// </summary>
-    /// <typeparam name="T">Declaring type of the property.</typeparam>
-    /// <typeparam name="V">Type of the property value.</typeparam>
-
-    class PropertyReflector<T, V> : PropertyReflector<T>
-    {
         /// <summary>
         /// Defines an unbound property accessor.
         /// </summary>
@@ -90,8 +62,13 @@ namespace Fidget.Extensions.Reflection.Internal
         /// </summary>
         /// <param name="propertyInfo">Property to reflect.</param>
         
-        public PropertyReflector( PropertyInfo propertyInfo ) : base( propertyInfo )
+        public PropertyReflector( PropertyInfo propertyInfo )
         {
+            PropertyInfo = propertyInfo ?? throw new ArgumentNullException( nameof( propertyInfo ) );
+
+            IsArray = PropertyInfo.PropertyType.IsArray;
+            IsReadOnly = PropertyInfo.SetMethod == null;
+
             Accessor = (AccessorDelegate)PropertyInfo
                 .GetMethod
                 .CreateDelegate( typeof( AccessorDelegate ) );
@@ -107,7 +84,7 @@ namespace Fidget.Extensions.Reflection.Internal
         /// <param name="source">Source instance containing the property value to copy.</param>
         /// <param name="target">Target instance into which to copy the property value.</param>
 
-        public override void Copy( T source, T target )
+        public void Copy( T source, T target )
         {
             if ( source == null ) throw new ArgumentNullException( nameof( source ) );
             if ( target == null ) throw new ArgumentNullException( nameof( target ) );
@@ -122,6 +99,29 @@ namespace Fidget.Extensions.Reflection.Internal
             }
 
             Mutator.Invoke( target, value );
+        }
+
+        /// <summary>
+        /// Returns whether the property value of the source and target are equal.
+        /// </summary>
+        /// <param name="source">Source instance containing a property value to compare.</param>
+        /// <param name="comparer">Target instance containing a property value to compare.</param>
+
+        public bool Equal( T source, T comparer )
+        {
+            if ( source == null ) throw new ArgumentNullException( nameof( source ) );
+            if ( comparer == null ) throw new ArgumentNullException( nameof( comparer ) );
+
+            var sourceValue = Accessor.Invoke( source );
+            var targetValue = Accessor.Invoke( comparer );
+
+            // for arrays, use an element comparison instead
+            if ( IsArray && sourceValue is IStructuralEquatable sv )
+            {
+                return sv.Equals( targetValue, StructuralComparisons.StructuralEqualityComparer );
+            }
+
+            return Equals( sourceValue, targetValue );
         }
     }
 }

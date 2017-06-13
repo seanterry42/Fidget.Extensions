@@ -44,5 +44,13 @@ namespace Fidget.Extensions.Reflection
         /// <param name="target">Target instance into which to copy the property value.</param>
 
         void Copy( T source, T target );
+
+        /// <summary>
+        /// Returns whether the property value of the source and target are equal.
+        /// </summary>
+        /// <param name="source">Source instance containing a property value to compare.</param>
+        /// <param name="comparer">Target instance containing a property value to compare.</param>
+
+        bool Equal( T source, T comparer );
     }
 }
