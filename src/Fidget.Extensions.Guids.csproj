@@ -1,24 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard1.4</TargetFramework>
-        <VersionPrefix>1.1.1</VersionPrefix>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <Version>2.0.0</Version>
         <PackageId>Fidget.Extensions.Guids</PackageId>
         <Authors>Sean Terry</Authors>
         <Description>Methods for generating and working with GUIDs.</Description>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-        <PackageReleaseNotes></PackageReleaseNotes>
+        <PackageReleaseNotes>https://github.com/seanterry42/Fidget.Extensions.Guids/releases</PackageReleaseNotes>
         <Copyright>Copyright 2017 Sean Terry</Copyright>
         <PackageLicenseUrl>https://github.com/seanterry42/Fidget.Extensions.Guids/blob/master/LICENSE</PackageLicenseUrl>
         <PackageProjectUrl>https://github.com/seanterry42/Fidget.Extensions.Guids</PackageProjectUrl>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-      <DocumentationFile>bin\Debug\netstandard1.4\.xml</DocumentationFile>
+      <DocumentationFile>bin\Debug\netstandard2.0\Fidget.Extensions.Guids.xml</DocumentationFile>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-      <DocumentationFile>bin\Release\netstandard1.4\.xml</DocumentationFile>
+      <DocumentationFile>bin\Release\netstandard2.0\Fidget.Extensions.Guids.xml</DocumentationFile>
     </PropertyGroup>
 
 </Project>
