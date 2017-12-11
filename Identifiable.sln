@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.13
+VisualStudioVersion = 15.0.27130.2003
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B31CE343-A01D-4AC8-AF91-E4047DD46A53}"
 	ProjectSection(SolutionItems) = preProject
@@ -9,9 +9,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fidget.Extensions.Guids", "src\Fidget.Extensions.Guids.csproj", "{86909DEF-D288-4538-85C2-19D8D950DEAB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identifiable", "src\Identifiable.csproj", "{86909DEF-D288-4538-85C2-19D8D950DEAB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fidget.Extensions.Guids.Test", "test\Fidget.Extensions.Guids.Test.csproj", "{73B1319B-6903-4E3D-A040-09FEB397F78F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identifiable.Test", "test\Identifiable.Test.csproj", "{73B1319B-6903-4E3D-A040-09FEB397F78F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,5 +50,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {36382AB9-B11F-4F8A-A9A1-8CD77E17633F}
 	EndGlobalSection
 EndGlobal

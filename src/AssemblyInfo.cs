@@ -1,1 +1,1 @@
-﻿[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Fidget.Extensions.Guids.Test")]
+﻿[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Identifiable.Test")]

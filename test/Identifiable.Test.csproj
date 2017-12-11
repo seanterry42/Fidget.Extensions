@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Fidget.Extensions.Guids.csproj" />
+    <ProjectReference Include="..\src\Identifiable.csproj" />
   </ItemGroup>
 
   <ItemGroup>
