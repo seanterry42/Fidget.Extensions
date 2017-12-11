@@ -13,22 +13,23 @@
     limitations under the License.
 */
 
-using System.Security.Cryptography;
+using System;
 
 namespace Identifiable.Internal
 {
     /// <summary>
-    /// Defines a factory for generating hash algorithms for name-based identifiers.
+    /// Defines a factory for creating named GUIDs.
     /// </summary>
 
-    public interface IHashAlgorithmFactory
+    public interface INamedGuidFactory
     {
         /// <summary>
-        /// Returns the hash algorithm implementation to use for generating the identifier.
+        /// Creates and return a name-based GUID using the given algorithm as defined in https://tools.ietf.org/html/rfc4122#section-4.3.
         /// </summary>
-        /// <param name="algorithm">Algorithm to return.</param>
-        /// <param name="version">GUID version field.</param>
+        /// <param name="algorithm">Hash algorithm to use for generating the name. SHA-1 is recommended.</param>
+        /// <param name="namespace">Name space identifier.</param>
+        /// <param name="name">Name for which to create a GUID.</param>
 
-        HashAlgorithm Create( in NamedGuidAlgorithm algorithm, out byte version );
+        Guid Create( in NamedGuidAlgorithm algorithm, in Guid @namespace, string name );
     }
 }
