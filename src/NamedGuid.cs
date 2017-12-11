@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Fidget.Extensions.Guids
+namespace Identifiable
 {
     /// <summary>
     /// Utility methods for generating name-based GUIDs.

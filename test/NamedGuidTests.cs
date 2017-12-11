@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Xunit;
 
-namespace Fidget.Extensions.Guids
+namespace Identifiable
 {
     /// <summary>
     /// Tests of the named GUID creator.

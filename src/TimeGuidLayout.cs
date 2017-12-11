@@ -1,4 +1,4 @@
-﻿namespace Fidget.Extensions.Guids
+﻿namespace Identifiable
 {
     /// <summary>
     /// Layouts for time-based GUIDs.

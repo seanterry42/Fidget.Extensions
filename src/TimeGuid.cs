@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 
-namespace Fidget.Extensions.Guids
+namespace Identifiable
 {
     /// <summary>
     /// Utility methods for generating time-based GUID values.

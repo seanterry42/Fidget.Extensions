@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Xunit;
 
-namespace Fidget.Extensions.Guids
+namespace Identifiable
 {
     /// <summary>
     /// Tests of time-based GUID generation.

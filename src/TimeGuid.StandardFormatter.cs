@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Fidget.Extensions.Guids
+namespace Identifiable
 {
     partial class TimeGuid
     {

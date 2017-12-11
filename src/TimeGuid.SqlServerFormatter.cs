@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Fidget.Extensions.Guids
+namespace Identifiable
 {
     partial class TimeGuid
     {
