@@ -13,24 +13,22 @@
     limitations under the License.
 */
 
-namespace Identifiable
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Identifiable.Internal
 {
     /// <summary>
-    /// Enumeration of named GUID algorithms.
+    /// Factory for generating time-based GUIDs.
     /// </summary>
-
-    public enum NamedGuidAlgorithm
+    
+    public class TimeGuidFactory : ITimeGuidFactory
     {
         /// <summary>
-        /// Generates a name-based GUID using the MD5 algorithm.
+        /// Gets the start of the Gregorian calenadar, used per RFC-4122 for UUID Version 1.
         /// </summary>
-        
-        MD5 = 3,
 
-        /// <summary>
-        /// Generates a name-based GUID using the SHA-1 algorithm (preferred).
-        /// </summary>
-        
-        SHA1 = 5,
+        public static long Epoch { get; } = new DateTime( 1582, 10, 15 ).Ticks;
     }
 }

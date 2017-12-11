@@ -17,7 +17,7 @@ using System;
 using System.Security.Cryptography;
 using Xunit;
 
-namespace Identifiable.Internal
+namespace Identifiable.Factories
 {
     public class HashAlgorithmFactoryTests
     {

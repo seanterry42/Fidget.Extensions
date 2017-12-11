@@ -13,22 +13,17 @@
     limitations under the License.
 */
 
-using System.Security.Cryptography;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Identifiable.Internal
 {
     /// <summary>
-    /// Defines a factory for generating hash algorithms for name-based identifiers.
+    /// Defines a factory for generating time-based GUIDs.
     /// </summary>
-
-    public interface IHashAlgorithmFactory
+    
+    public interface ITimeGuidFactory
     {
-        /// <summary>
-        /// Returns the hash algorithm implementation to use for generating the identifier.
-        /// </summary>
-        /// <param name="algorithm">Algorithm to return.</param>
-        /// <param name="version">GUID version field.</param>
-
-        HashAlgorithm Create( in NamedGuidAlgorithm algorithm, out byte version );
     }
 }

@@ -18,13 +18,13 @@ using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
-namespace Identifiable
+namespace Identifiable.Factories
 {
     /// <summary>
-    /// Utility methods for generating time-based GUID values.
+    /// Factory for generating time-based GUIDs.
     /// </summary>
 
-    public static class TimeGuid
+    public class TimeGuidFactory
     {
         /// <summary>
         /// Gets the start of the Gregorian calenadar, used per RFC-4122 for UUID Version 1.
@@ -35,8 +35,8 @@ namespace Identifiable
         /// <summary>
         /// Collection of formatters, indexed by layout option.
         /// </summary>
-
-        static readonly IReadOnlyDictionary<TimeGuidLayout, ITimeGuidFormatter> formatters = new Dictionary<TimeGuidLayout, ITimeGuidFormatter>
+        
+        readonly IReadOnlyDictionary<TimeGuidLayout,ITimeGuidFormatter> formatters = new Dictionary<TimeGuidLayout,ITimeGuidFormatter>
         {
             { TimeGuidLayout.Standard, StandardFormatter.Instance },
             { TimeGuidLayout.SqlServer, SqlServerFormatter.Instance },
@@ -47,7 +47,7 @@ namespace Identifiable
         /// </summary>
         /// <param name="layout">Layout of the identifier.</param>
 
-        public static Guid Create( TimeGuidLayout layout )
+        public Guid Create( TimeGuidLayout layout )
         {
             if ( !formatters.TryGetValue( layout, out ITimeGuidFormatter formatter ) )
                 throw new NotImplementedException();

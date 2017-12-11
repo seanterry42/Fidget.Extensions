@@ -15,7 +15,7 @@
 
 using System;
 
-namespace Identifiable.Internal
+namespace Identifiable.Factories
 {
     /// <summary>
     /// Defines a factory for creating named GUIDs.

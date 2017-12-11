@@ -17,7 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Identifiable.Internal
+namespace Identifiable.Factories
 {
     /// <summary>
     /// Factory for creating named GUIDs.
@@ -36,6 +36,12 @@ namespace Identifiable.Internal
         {
             this.algorithmFactory = algorithmFactory ?? throw new ArgumentNullException( nameof(algorithmFactory) );
         }
+
+        /// <summary>
+        /// Gets the default instance of the type.
+        /// </summary>
+        
+        internal static INamedGuidFactory Instance { get; } = new NamedGuidFactory( HashAlgorithmFactory.Instance );
 
         /// <summary>
         /// Collection of named GUID versions indexed by algorithm.

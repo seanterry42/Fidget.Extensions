@@ -1,48 +1,34 @@
-﻿using System;
-using System.Security.Cryptography;
-using System.Text;
+﻿/*  Copyright 2017 Sean Terry
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+using Identifiable.Factories;
+using System;
 
 namespace Identifiable
 {
     /// <summary>
-    /// Utility methods for generating name-based GUIDs.
+    /// Creates GUIDs based on a namespace and name.
     /// </summary>
 
-    public static partial class NamedGuid
+    public static class NamedGuid
     {
         /// <summary>
-        /// Returns the hash algorithm implementation to use for generating the identifier.
+        /// Factory to use for generating named identifiers.
         /// </summary>
-        /// <param name="algorithm">Algorithm to return.</param>
         
-        internal static HashAlgorithm GetAlgorithm( NamedGuidAlgorithm algorithm )
-        {
-            switch ( algorithm )
-            {
-                case NamedGuidAlgorithm.MD5:
-                    return MD5.Create();
-                case NamedGuidAlgorithm.SHA1:
-                    return SHA1.Create();
-                default: throw new NotImplementedException();
-            }
-        }
-
-        /// <summary>
-        /// Returns the GUID version for the specified algorithm.
-        /// </summary>
-        /// <param name="algorithm">Algorithm whose version to return.</param>
-        
-        internal static byte GetVersion( NamedGuidAlgorithm algorithm )
-        {
-            switch ( algorithm )
-            {
-                case NamedGuidAlgorithm.MD5:
-                    return 0x30;
-                case NamedGuidAlgorithm.SHA1:
-                    return 0x50;
-                default: throw new NotImplementedException();
-            }
-        }
+        static readonly INamedGuidFactory factory = NamedGuidFactory.Instance;
 
         /// <summary>
         /// Creates and return a name-based GUID using the given algorithm as defined in https://tools.ietf.org/html/rfc4122#section-4.3.
@@ -51,31 +37,7 @@ namespace Identifiable
         /// <param name="namespace">Name space identifier.</param>
         /// <param name="name">Name for which to create a GUID.</param>
         
-        public static Guid Create( NamedGuidAlgorithm algorithm, Guid @namespace, string name )
-        {
-            if ( name == null ) throw new ArgumentNullException( nameof( name ) );
-
-            var version = GetVersion( algorithm );
-            var encoded = Encoding.Unicode.GetBytes( name );
-            var bytes = @namespace.ToByteArray();
-            Array.Resize( ref bytes, encoded.Length + 16 );
-            Array.Copy( encoded, 0, bytes, 16, encoded.Length );
-
-            using ( var hasher = GetAlgorithm( algorithm ) )
-            {
-                var hash = hasher.ComputeHash( bytes );
-                Array.Resize( ref hash, 16 );
-
-                // set version
-                hash[7] &= 0x0f;
-                hash[7] |= version;
-
-                // set variant
-                hash[8] &= 0xBF;
-                hash[8] |= 0x80;
-
-                return new Guid( hash );
-            }
-        }
+        public static Guid Create( NamedGuidAlgorithm algorithm, Guid @namespace, string name ) => 
+            factory.Create( algorithm, @namespace, name );
     }
 }

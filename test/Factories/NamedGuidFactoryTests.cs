@@ -17,7 +17,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Identifiable.Internal
+namespace Identifiable.Factories
 {
     public class NamedGuidFactoryTests
     {
