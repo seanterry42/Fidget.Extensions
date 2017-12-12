@@ -13,22 +13,22 @@
     limitations under the License.
 */
 
-using System;
+using System.Security.Cryptography;
 
-namespace Identifiable
+namespace Identifiable.Factories
 {
     /// <summary>
-    /// Utility methods for generating time-based GUID values.
+    /// Defines a factory for generating hash algorithms for name-based identifiers.
     /// </summary>
 
-    public static class TimeGuid
+    public interface IHashAlgorithmFactory
     {
         /// <summary>
-        /// Creates and returns a time-based GUID in the given layout.
+        /// Returns the hash algorithm implementation to use for generating the identifier.
         /// </summary>
-        /// <param name="layout">Layout of the identifier.</param>
+        /// <param name="algorithm">Algorithm to return.</param>
+        /// <param name="version">GUID version field.</param>
 
-        public static Guid Create( TimeGuidLayout layout ) => 
-            Factories.TimeGuidFactory.Instance.Create( layout );
+        HashAlgorithm Create( in NamedGuidAlgorithm algorithm, out byte version );
     }
 }

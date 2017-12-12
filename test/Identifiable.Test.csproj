@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <RootNamespace>Fidget.Extensions.Guids</RootNamespace>
+    <RootNamespace>Identifiable</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Fidget.Extensions.Guids.csproj" />
+    <ProjectReference Include="..\src\Identifiable.csproj" />
   </ItemGroup>
 
   <ItemGroup>

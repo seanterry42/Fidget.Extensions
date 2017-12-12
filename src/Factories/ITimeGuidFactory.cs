@@ -15,20 +15,19 @@
 
 using System;
 
-namespace Identifiable
+namespace Identifiable.Factories
 {
     /// <summary>
-    /// Utility methods for generating time-based GUID values.
+    /// Defines a factory for generating time-based GUIDs.
     /// </summary>
 
-    public static class TimeGuid
+    public interface ITimeGuidFactory
     {
         /// <summary>
         /// Creates and returns a time-based GUID in the given layout.
         /// </summary>
         /// <param name="layout">Layout of the identifier.</param>
 
-        public static Guid Create( TimeGuidLayout layout ) => 
-            Factories.TimeGuidFactory.Instance.Create( layout );
+        Guid Create( TimeGuidLayout layout );
     }
 }

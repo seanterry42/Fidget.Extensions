@@ -13,31 +13,23 @@
     limitations under the License.
 */
 
-using Identifiable.Factories;
 using System;
 
-namespace Identifiable
+namespace Identifiable.Factories
 {
     /// <summary>
-    /// Creates GUIDs based on a namespace and name.
+    /// Defines a factory for creating named GUIDs.
     /// </summary>
 
-    public static class NamedGuid
+    public interface INamedGuidFactory
     {
-        /// <summary>
-        /// Factory to use for generating named identifiers.
-        /// </summary>
-        
-        static readonly INamedGuidFactory factory = NamedGuidFactory.Instance;
-
         /// <summary>
         /// Creates and return a name-based GUID using the given algorithm as defined in https://tools.ietf.org/html/rfc4122#section-4.3.
         /// </summary>
         /// <param name="algorithm">Hash algorithm to use for generating the name. SHA-1 is recommended.</param>
         /// <param name="namespace">Name space identifier.</param>
         /// <param name="name">Name for which to create a GUID.</param>
-        
-        public static Guid Create( NamedGuidAlgorithm algorithm, Guid @namespace, string name ) => 
-            factory.Create( algorithm, @namespace, name );
+
+        Guid Create( in NamedGuidAlgorithm algorithm, in Guid @namespace, string name );
     }
 }
