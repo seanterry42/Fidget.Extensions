@@ -1,9 +1,9 @@
-# Fidget.Extensions.Guids
-Methods for generating and working with GUIDs.
+# Identifiable
+Generates GUIDs based on current time (UUIDv1), or based on a unique name using a cryptographic hash (UUIDv3 using MD5 or UUIDv5 using SHA1). Includes a non-standard variant layout of time-based GUIDs  for near-sequential sorting in SQL Server.
 
 ### TimeGuid.Create
 Generates time-based GUIDs for use in database clustered indexes. The following algorithms are implemented:
-* `UuidVersion1` generates a time-based GUID that conforms to [RFC 4122](https://tools.ietf.org/html/rfc4122#section-4) without exposing a MAC address.
+* `Standard` generates a time-based GUID that conforms to [RFC 4122](https://tools.ietf.org/html/rfc4122#section-4) without exposing a MAC address.
 * `SqlServer` generates a similar identifier that is optimally arranged for use with SQL Server clustered indexes and can be transposed to/from a valid Version 1 identifier. In this arrangement, the variant will be zero to avoid mis-identification as an invalid GUID version.
 
 **Why not use a random GUID?**
