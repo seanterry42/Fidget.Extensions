@@ -50,7 +50,7 @@ namespace Fidget.Extensions.Guids
         /// <param name="algorithm">Hash algorithm to use for generating the name. SHA-1 is recommended.</param>
         /// <param name="namespace">Name space identifier.</param>
         /// <param name="name">Name for which to create a GUID.</param>
-        
+        [Obsolete( "This package has been replaced by 'Identifiable'" )]
         public static Guid Create( NamedGuidAlgorithm algorithm, Guid @namespace, string name )
         {
             if ( name == null ) throw new ArgumentNullException( nameof( name ) );

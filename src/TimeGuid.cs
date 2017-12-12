@@ -13,6 +13,7 @@ namespace Fidget.Extensions.Guids
         /// Gets the start of the Gregorian calenadar, used per RFC-4122 for UUID Version 1.
         /// </summary>
 
+        [Obsolete( "This package has been replaced by 'Identifiable'" )]
         public static long Epoch { get; } = new DateTime( 1582, 10, 15 ).Ticks;
 
         /// <summary>
@@ -34,7 +35,8 @@ namespace Fidget.Extensions.Guids
         /// Creates and returns a time-based GUID in the given layout.
         /// </summary>
         /// <param name="layout">Layout of the identifier.</param>
-        
+
+        [Obsolete( "This package has been replaced by 'Identifiable'" )]
         public static Guid Create( TimeGuidLayout layout )
         {
             var formatter = GetFormatter( layout );
