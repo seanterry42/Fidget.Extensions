@@ -24,8 +24,14 @@ namespace Identifiable.Factories
     /// Factory for generating time-based GUIDs.
     /// </summary>
 
-    public class TimeGuidFactory
+    public class TimeGuidFactory : ITimeGuidFactory
     {
+        /// <summary>
+        /// Gets the default instance of the type.
+        /// </summary>
+        
+        public static ITimeGuidFactory Instance { get; } = new TimeGuidFactory();
+
         /// <summary>
         /// Gets the start of the Gregorian calenadar, used per RFC-4122 for UUID Version 1.
         /// </summary>
@@ -35,8 +41,8 @@ namespace Identifiable.Factories
         /// <summary>
         /// Collection of formatters, indexed by layout option.
         /// </summary>
-        
-        readonly IReadOnlyDictionary<TimeGuidLayout,ITimeGuidFormatter> formatters = new Dictionary<TimeGuidLayout,ITimeGuidFormatter>
+
+        readonly IReadOnlyDictionary<TimeGuidLayout, ITimeGuidFormatter> formatters = new Dictionary<TimeGuidLayout, ITimeGuidFormatter>
         {
             { TimeGuidLayout.Standard, StandardFormatter.Instance },
             { TimeGuidLayout.SqlServer, SqlServerFormatter.Instance },

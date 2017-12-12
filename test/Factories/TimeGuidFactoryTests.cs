@@ -1,17 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
+﻿/*  Copyright 2017 Sean Terry
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+using System;
 using System.Linq;
-using System.Text;
 using Xunit;
 
-namespace Identifiable
+namespace Identifiable.Factories
 {
-    /// <summary>
-    /// Tests of time-based GUID generation.
-    /// </summary>
-    
-    public class TimeGuidTests
+    public class TimeGuidFactoryTests
     {
+        ITimeGuidFactory instance => new TimeGuidFactory();
+
         /// <summary>
         /// Tests of the Epoch property.
         /// </summary>
@@ -22,32 +33,24 @@ namespace Identifiable
             public void equals_gegorianReformDate_October_15_1582()
             {
                 var expected = new DateTime( 1582, 10, 15 ).Ticks;
-                var actual = TimeGuid.Epoch;
+                var actual = TimeGuidFactory.Epoch;
 
                 Assert.Equal( expected, actual );
             }
         }
-        
-        /// <summary>
-        /// Tests of the create method.
-        /// </summary>
-        
-        public class Create
+
+        public class Create : TimeGuidFactoryTests
         {
-            TimeGuidLayout layout = default(TimeGuidLayout);
-            Guid invoke() => TimeGuid.Create( layout );
+            TimeGuidLayout layout = default( TimeGuidLayout );
+            Guid invoke() => instance.Create( layout );
 
             [Fact]
             public void requires_valid_layout()
             {
-                layout = default(TimeGuidLayout);
-                Assert.Throws<NotImplementedException>( ()=>invoke() );
+                layout = default( TimeGuidLayout );
+                Assert.Throws<NotImplementedException>( () => invoke() );
             }
-
-            /// <summary>
-            /// Standard layout should identify as variant one.
-            /// </summary>
-
+            
             [Fact]
             public void standard_returns_variant_one()
             {
@@ -142,19 +145,20 @@ namespace Identifiable
             /// All hex characters in SQL server and Standard layouts should be transposable.
             /// This just checks that all of the characters are present, not that they are in the correct order.
             /// </summary>
-            
+
             [Fact]
             public void sqlServer_returns_transposed_standard()
             {
-                var time = DateTime.UtcNow.Ticks - TimeGuid.Epoch;
+                var time = DateTime.UtcNow.Ticks - TimeGuidFactory.Epoch;
                 short clock = 0x6677;
                 var node = new byte[] { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55 };
 
-                var sql = Formatters.SqlServerFormatter.Instance.Create( time, clock, node ).ToString().OrderBy( _=> _ );
-                var standard = Formatters.StandardFormatter.Instance.Create( time, clock, node ).ToString().OrderBy( _=> _ );
+                var sql = Formatters.SqlServerFormatter.Instance.Create( time, clock, node ).ToString().OrderBy( _ => _ );
+                var standard = Formatters.StandardFormatter.Instance.Create( time, clock, node ).ToString().OrderBy( _ => _ );
 
                 Assert.True( sql.SequenceEqual( standard ) );
             }
         }
+
     }
 }
