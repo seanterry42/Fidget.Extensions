@@ -64,38 +64,15 @@ namespace Identifiable.Factories
         {
             if ( name == null ) throw new ArgumentNullException( nameof( name ) );
 
-            // function to put guid bytes into network order
-            void correctEndianness( byte[] data )
-            {
-                /* from https://msdn.microsoft.com/en-us/library/windows/desktop/aa373931(v=vs.85).aspx
-                    typedef struct _GUID {
-                      DWORD Data1;
-                      WORD  Data2;
-                      WORD  Data3;
-                      BYTE  Data4[8]; // already big-endian
-                    } GUID;
-                */
+            var encoded = Encoding.Unicode.GetBytes( name );
+            var bytes = @namespace.ToByteArray();
+            Array.Resize( ref bytes, encoded.Length + 16 );
+            Array.Copy( encoded, 0, bytes, 16, encoded.Length );
 
-                if ( BitConverter.IsLittleEndian )
-                {
-                    Array.Reverse( data, 0, 4 );
-                    Array.Reverse( data, 4, 2 );
-                    Array.Reverse( data, 6, 2 );
-                }
-            }
-
-            var nameBytes = Encoding.UTF8.GetBytes( name );
-            var namespaceBytes = @namespace.ToByteArray();
-            correctEndianness( namespaceBytes );
-            
             using ( var hasher = algorithmFactory.Create( algorithm, out byte version ) )
             {
-                hasher.TransformBlock( namespaceBytes, 0, namespaceBytes.Length, null, 0 );
-                hasher.TransformFinalBlock( nameBytes, 0, nameBytes.Length );
-                var hash = hasher.Hash;
-
+                var hash = hasher.ComputeHash( bytes );
                 Array.Resize( ref hash, 16 );
-                correctEndianness( hash );
 
                 // set version
                 hash[7] &= 0b00001111;

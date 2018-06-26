@@ -97,18 +97,21 @@ namespace Identifiable.Factories
                 }
             }
 
-            public class DeterministicResults : TheoryData<NamedGuidAlgorithm, Guid, string, Guid>
+            /// <summary>
+            /// Expected results for an identifier for the text "Hello World".
+            /// </summary>
+            
+            public static IEnumerable<object[]> deterministic_results()
             {
-                public DeterministicResults()
-                {
-                    // example from https://tools.ietf.org/html/rfc4122#appendix-B
-                    // note the result comes from the errata: http://www.rfc-editor.org/errata_search.php?rfc=4122&eid=1352
-                    Add( NamedGuidAlgorithm.MD5, new Guid( "6ba7b810-9dad-11d1-80b4-00c04fd430c8" ), "www.widgets.com", new Guid( "3d813cbb-47fb-32ba-91df-831e1593ac29" ) );
-                }
+                const string name = "Hello World";
+                const string ns = "bb205f8f-f3c6-4204-bfdf-7ceeaca6d593";
+                yield return new object[] { NamedGuidAlgorithm.MD5, new Guid( ns ), name, new Guid( "77d1b2af-f19e-34e8-a2a8-dba40d8596ba" ) };
+                yield return new object[] { NamedGuidAlgorithm.SHA1, new Guid( ns ), name, new Guid( "d18fd408-dc10-52a9-9a61-d1eb6d6a3088" ) };
             }
 
             [Theory]
-            [ClassData(typeof(DeterministicResults))]
+            [MemberData(nameof(deterministic_results))]
+
             public void returns_deterministic( NamedGuidAlgorithm algorithm, Guid @namespace, string name, Guid expected )
             {
                 this.@namespace = @namespace;
