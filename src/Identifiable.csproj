@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <LangVersion>latest</LangVersion>
+        <LangVersion>8.0</LangVersion>
         <TargetFramework>netstandard2.0</TargetFramework>
-        <Version>4.0.0</Version>
+        <Version>5.0.0</Version>
         <PackageId>Identifiable</PackageId>
         <Authors>Sean Terry</Authors>
         <Description>Generates GUIDs based on current time (UUIDv1), MD5 hash (UUIDv3), and SHA1 hash (UUIDv5). Includes a non-standard variant layout of time-based GUIDs for near-sequential sorting in SQL Server.</Description>
