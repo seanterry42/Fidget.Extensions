@@ -9,11 +9,17 @@
         <Description>Generates GUIDs based on current time (UUIDv1), MD5 hash (UUIDv3), and SHA1 hash (UUIDv5). Includes a non-standard variant layout of time-based GUIDs for near-sequential sorting in SQL Server.</Description>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <PackageReleaseNotes>https://github.com/seanterry/Identifiable/releases</PackageReleaseNotes>
-        <Copyright>Copyright 2017 Sean Terry</Copyright>
+        <Copyright>Copyright 2020 Sean Terry</Copyright>
         <PackageLicenseUrl>https://github.com/seanterry/Identifiable/blob/master/LICENSE</PackageLicenseUrl>
         <PackageProjectUrl>https://github.com/seanterry/Identifiable</PackageProjectUrl>
         <DocumentationFile>bin\$(Configuration)\netstandard2.0\Identifiable.xml</DocumentationFile>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>Identifiable.Test</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+  
 </Project>
