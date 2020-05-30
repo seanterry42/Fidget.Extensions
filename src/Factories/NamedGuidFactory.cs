@@ -39,40 +39,6 @@ namespace Identifiable.Factories
         };
 
         /// <summary>
-        /// Creates and return a name-based GUID that is not compatible with RFC 4122.
-        /// </summary>
-        /// <param name="algorithm">Hash algorithm to use for generating the name. SHA-1 is recommended.</param>
-        /// <param name="namespace">Name space identifier.</param>
-        /// <param name="name">Name for which to create a GUID.</param>
-
-        [Obsolete( "Consider using Compute method instead." )]
-        public Guid Create( in NamedGuidAlgorithm algorithm, in Guid @namespace, string name )
-        {
-            if ( name == null ) throw new ArgumentNullException( nameof( name ) );
-
-            var encoded = Encoding.Unicode.GetBytes( name );
-            var bytes = @namespace.ToByteArray();
-            Array.Resize( ref bytes, encoded.Length + 16 );
-            Array.Copy( encoded, 0, bytes, 16, encoded.Length );
-
-            using ( var hasher = algorithmFactory.Create( algorithm, out byte version ) )
-            {
-                var hash = hasher.ComputeHash( bytes );
-                Array.Resize( ref hash, 16 );
-
-                // set version
-                hash[7] &= 0b00001111;
-                hash[7] |= version;
-
-                // set variant - turn on first bit, turn off second bit
-                hash[8] |= 0b10000000;
-                hash[8] &= 0b10111111;
-
-                return new Guid( hash );
-            }
-        }
-
-        /// <summary>
         /// Computes and return a name-based GUID using the given algorithm as defined in https://tools.ietf.org/html/rfc4122#section-4.3.
         /// </summary>
         /// <param name="algorithm">Hash algorithm to use for generating the name. SHA-1 is recommended.</param>
@@ -84,7 +50,7 @@ namespace Identifiable.Factories
             if ( name == null ) throw new ArgumentNullException( nameof( name ) );
 
             // function to put guid bytes into network order
-            void correctEndianness( byte[] data )
+            static void correctEndianness( byte[] data )
             {
                 /* from https://msdn.microsoft.com/en-us/library/windows/desktop/aa373931(v=vs.85).aspx
                     typedef struct _GUID {
